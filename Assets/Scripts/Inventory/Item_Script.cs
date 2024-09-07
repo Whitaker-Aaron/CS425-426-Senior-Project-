@@ -11,6 +11,7 @@ public class Item_Script : MonoBehaviour
 
     public TMP_Text itemName;
     public RawImage itemTexture;
+    public TMP_Text item_amount;
     public void SetCurrentItem(Item item)
     {
         if (heldProperties == null)
@@ -20,6 +21,7 @@ public class Item_Script : MonoBehaviour
 
         itemName.text = heldProperties.name;
         itemTexture.texture = heldProperties.itemTexture;
+        item_amount.text = heldProperties.currentAmount.ToString(); ;
     }
 
     public void SetHeldProperties(Item item)
@@ -27,6 +29,8 @@ public class Item_Script : MonoBehaviour
         heldProperties = ScriptableObject.CreateInstance<Item>();
         heldProperties.itemName = item.itemName;
         heldProperties.itemTexture = item.itemTexture;
+        heldProperties.currentAmount = item.currentAmount;
+        heldProperties.maxStackAmount = item.maxStackAmount;
     }
 
 }
