@@ -23,19 +23,6 @@ public class InventoryManager : MonoBehaviour
     private void Update()
     {
         OpenClose();
-        MoveItemInHand();
-
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            if ((Inventory.instance.GetItemCount(itemToRemove) - amountToRemove) >= 0)
-            {
-                Inventory.instance.RemoveItem(itemToRemove, amountToRemove);
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Inventory.instance.AddItem(itemToAdd, amountToAdd);
-        }
     }
 
     public void SetList()
@@ -76,17 +63,5 @@ public class InventoryManager : MonoBehaviour
             open = !open;
             Menu.SetActive(open);
         }
-    }
-    void MoveItemInHand()
-    {
-        if (currentInHand == null)
-        {
-            return;
-        }
-                
-        currentInHand.transform.parent = transform;
-        currentInHand.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-        Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f) + offset;
-        currentInHand.transform.position = pos;
     }
 }

@@ -19,33 +19,26 @@ public class Movement : MonoBehaviour
     // Physics should be processed in the fixed update
     void FixedUpdate()
     {
-        if (inventoryManager.open == true)
+        if (Input.GetKey(KeyCode.W)) {
+            body.position += new Vector3(0.0f, 0.0f, 5.0f * Time.deltaTime);
+            body.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+            //body.AddForce(0.0f, 0.0f, 500.0f * Time.deltaTime);
+        }
+        if (Input.GetKey(KeyCode.S))
         {
-            playerController.isMoving = false;
+            body.position -= new Vector3(0.0f, 0.0f, 5.0f * Time.deltaTime);
+            body.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            body.position -= new Vector3(5.0f * Time.deltaTime, 0.0f, 0.0f);
+            body.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            body.position += new Vector3(5.0f * Time.deltaTime, 0.0f, 0.0f);
+            body.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
         }
 
-        else { 
-            if (Input.GetKey(KeyCode.W)) {
-                body.position += new Vector3(0.0f, 0.0f, 5.0f * Time.deltaTime);
-                body.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-                //body.AddForce(0.0f, 0.0f, 500.0f * Time.deltaTime);
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                body.position -= new Vector3(0.0f, 0.0f, 5.0f * Time.deltaTime);
-                body.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                body.position -= new Vector3(5.0f * Time.deltaTime, 0.0f, 0.0f);
-                body.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                body.position += new Vector3(5.0f * Time.deltaTime, 0.0f, 0.0f);
-                body.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
-            }
-
-        }
     }
 }
