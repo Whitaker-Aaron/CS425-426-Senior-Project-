@@ -7,22 +7,35 @@ public class InventoryManager : MonoBehaviour
     public GameObject currentInHand;
     public Transform cellParent;
     public Vector3 offset;
-    bool open = false;
+    public bool open = false;
     public GameObject Menu;
 
     public Item itemToRemove;
     public int amountToRemove;
+    public int amountToAdd;
     public GameObject itemToAdd;
 
     private void Start()
     {
-        //Loading all the items
         SetList();
     }
 
     private void Update()
     {
         OpenClose();
+        MoveItemInHand();
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            if ((Inventory.instance.GetItemCount(itemToRemove) - amountToRemove) >= 0)
+            {
+                Inventory.instance.RemoveItem(itemToRemove, amountToRemove);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Inventory.instance.AddItem(itemToAdd, amountToAdd);
+        }
     }
 
     public void SetList()
@@ -43,10 +56,17 @@ public class InventoryManager : MonoBehaviour
             {
                 if (Inventory.instance.inventoryItems[index].GetComponent<Item_Script>().heldProperties != null)
                 {
-                    //cell.GetComponent<CellScript>().CreateItemInCell(Inventory.instance.inventoryItems[index].GetComponent<Item_Script>().heldProperties);
+                    cell.GetComponent<CellScript>().CreateItemInCell(Inventory.instance.inventoryItems[index].GetComponent<Item_Script>().heldProperties);
+                }
+                else
+                {
+                    cell.GetComponent<CellScript>().CreateItemInCell(Inventory.instance.inventoryItems[index].GetComponent<Item_Script>().itemObject);
                 }
 
+                Inventory.instance.inventoryItems[index] = cell.GetComponent<CellScript>().currentHeldItem;
             }
+            cell.GetComponent<CellScript>().cellIndex = index;
+            index++;
         }
     }
     void OpenClose()
@@ -56,5 +76,17 @@ public class InventoryManager : MonoBehaviour
             open = !open;
             Menu.SetActive(open);
         }
+    }
+    void MoveItemInHand()
+    {
+        if (currentInHand == null)
+        {
+            return;
+        }
+                
+        currentInHand.transform.parent = transform;
+        currentInHand.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+        Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f) + offset;
+        currentInHand.transform.position = pos;
     }
 }
