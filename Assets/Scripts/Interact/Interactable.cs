@@ -16,18 +16,36 @@ public class Interactable : MonoBehaviour
     public virtual void Start()
     {
         interactableNameCanvas = GameObject.FindGameObjectWithTag("Canvas");
-        interactableNameText = interactableNameCanvas.GetComponentInChildren<InteractableNameText>();
+
+        if (interactableNameCanvas != null)
+        {
+            interactableNameText = interactableNameCanvas.GetComponentInChildren<InteractableNameText>();
+        }
+        else
+        {
+            Debug.LogWarning("Canvas with the InteractableNameText component not found.");
+        }
     }
 
     public void TargetOn()
     {
-        interactableNameText.ShowText(this);
-        interactableNameText.SetInteractableNamePosition(this);
+        if (interactableNameText != null)
+        {
+            interactableNameText.ShowText(this);
+            interactableNameText.SetInteractableNamePosition(this);
+        }
+        else
+        {
+            Debug.LogWarning("InteractableNameText component is missing.");
+        }
     }
 
     public void TargetOff()
     {
-        interactableNameText.HideText();
+        if (interactableNameText != null)
+        {
+            interactableNameText.HideText();
+        }
     }
 
     public void Interact()
@@ -37,7 +55,7 @@ public class Interactable : MonoBehaviour
 
     protected virtual void Interaction()
     {
-
+        // Custom interaction logic here
     }
 
     private void OnDrawGizmos()
