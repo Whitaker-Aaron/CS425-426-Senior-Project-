@@ -2,97 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
 
 public class Interactor : MonoBehaviour
 {
-    [SerializeField] float maxInteractingDistance = 10;
-    [SerializeField] float interactingRadius = 1;
+    [SerializeField] private Transform interactionPoint;
+    [SerializeField] private float interactionRadius = 2.0f;
+    [SerializeField] private LayerMask interactableMask;
 
-    LayerMask layerMask;
-    Transform cameraTransform;
-    InputAction interactAction;
+    private readonly Collider[] colliders = new Collider[3];
+    private i_Interactable currentInteractable;
 
-    Vector3 origin;
-    Vector3 direction;
-    Vector3 hitPosition;
-    float hitDistance;
-
-    [HideInInspector] public Interactable interactableTarget;
-
-    void Start()
+    private void Update()
     {
-        if (Camera.main != null)
-            cameraTransform = Camera.main.transform;
+        // Check for interactable objects within the radius
+        int num = Physics.OverlapSphereNonAlloc(interactionPoint.position, interactionRadius, colliders, interactableMask);
 
-        layerMask = LayerMask.GetMask("Outline", "Enemy", "NPC");
-
-        interactAction = GetComponent<PlayerInput>().actions["Interact"];
-        interactAction.performed += Interact;
-    }
-
-    void Awake()
-    {
-        if (Camera.main != null && cameraTransform == null)
-            cameraTransform = Camera.main.transform;
-    }
-
-    void Update()
-    {
-        // Check if cameraTransform is null
-        if (cameraTransform == null)
+        if (num > 0)
         {
-            Debug.LogWarning("Camera transform is missing.");
-            return; // Exit Update if no camera is present
-        }
-
-        direction = cameraTransform.forward;
-        origin = cameraTransform.position;
-        RaycastHit hit;
-
-        if (Physics.SphereCast(origin, interactingRadius, direction, out hit, maxInteractingDistance, layerMask))
-        {
-            hitPosition = hit.point;
-            hitDistance = hit.distance;
-            if (hit.transform.TryGetComponent<Interactable>(out interactableTarget))
+            // Try to get the first interactable object in range
+            i_Interactable interactable = colliders[0].GetComponent<i_Interactable>();
+            if (interactable != null)
             {
-                interactableTarget.TargetOn();
-            }
-        }
-        else if (interactableTarget != null)
-        {
-            interactableTarget.TargetOff();
-            interactableTarget = null;
-        }
-    }
+                // Show UI if we've entered a new interactable object
+                if (interactable != currentInteractable)
+                {
+                    currentInteractable?.HideUi(); // Hide UI of the previous interactable
+                    currentInteractable = interactable;
+                    currentInteractable.ShowUI();   // Show UI for the new interactable
+                }
 
-    private void Interact(InputAction.CallbackContext obj)
-    {
-        if (interactableTarget != null)
-        {
-            if (Vector3.Distance(transform.position, interactableTarget.transform.position) <= interactableTarget.interactionDistance)
-            {
-                interactableTarget.Interact();
+                // Interaction key check (e.g., 'F')
+                if (Keyboard.current.fKey.wasPressedThisFrame)
+                {
+                    currentInteractable.Interact(this);
+                }
             }
         }
         else
         {
-            Debug.Log("Nothing to Interact with!");
-        }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(origin, origin + direction * hitDistance);
-        Gizmos.DrawWireSphere(hitPosition, interactingRadius);
-    }
-
-    private void OnDestroy()
-    {
-        if (interactAction != null)
-        {
-            interactAction.performed -= Interact;
+            // No interactable objects in range, hide UI and reset reference
+            if (currentInteractable != null)
+            {
+                currentInteractable.HideUi(); // Hide UI when leaving interaction range
+                currentInteractable = null;   // Reset interactable reference
+            }
         }
     }
 }

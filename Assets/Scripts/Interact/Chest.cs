@@ -2,31 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : Interactable
+public class Chest : MonoBehaviour, i_Interactable
 {
+    [SerializeField] private string prompt;
+
     private Animator animator;
+
     [Header("Locked Chest Options")]
     public bool isLocked;
     public string chestID;
     public bool isOpen;
+    public GameObject chestUI;
 
-    public override void Start()
-    {
-        base.Start();
-        animator = GetComponent<Animator>();
+    public string interactionPrompt => prompt;
+
+    public void Start()
+    { 
         isOpen = false;
     }
 
-    protected override void Interaction()
+    public bool Interact(Interactor interactor)
     {
-        base.Interaction();
-
         if (!isLocked)
         {
-            if (!isOpen)
+            if (isOpen == false)
             {
-                OpenChest();
                 Debug.Log("Opening the Chest");
+                isOpen = true;
             }
             else
             {
@@ -35,14 +37,25 @@ public class Chest : Interactable
         }
         else
         {
-            //This is where we would use a specific key
-            //Check the chest ID with the Key ID
+            
+            Debug.Log("Chest is locked");
         }
+
+        return true;
     }
 
-    void OpenChest()
+    public void ShowUI()
     {
-        animator.SetTrigger("Open Chest");
-        isOpen = !isOpen;
+        if (chestUI != null)
+        {
+            chestUI.SetActive(true);
+        }
+    }
+    public void HideUi()
+    {
+        if (chestUI != null)
+        {
+            chestUI.SetActive(false);
+        }
     }
 }
