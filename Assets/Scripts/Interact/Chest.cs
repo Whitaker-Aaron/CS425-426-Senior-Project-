@@ -7,6 +7,9 @@ public class Chest : MonoBehaviour, i_Interactable
     [SerializeField] private string prompt;
 
     private Animator animator;
+    private MaterialScrollManager materialManager;
+    private Key key;
+    public enum chestType { material, weapon, item }
 
     [Header("Locked Chest Options")]
     public bool isLocked;
@@ -14,10 +17,12 @@ public class Chest : MonoBehaviour, i_Interactable
     public bool isOpen;
     public GameObject chestUI;
 
+    [Header("Items to Add")]
+    public List<ItemList> itemsToAdd;  
     public string interactionPrompt => prompt;
 
     public void Start()
-    { 
+    {
         isOpen = false;
     }
 
@@ -28,6 +33,12 @@ public class Chest : MonoBehaviour, i_Interactable
             if (isOpen == false)
             {
                 Debug.Log("Opening the Chest");
+
+                foreach (var itemPair in itemsToAdd)
+                {
+                    materialManager.AddToMaterialsInventory(itemPair.material, itemPair.amount);
+                }
+
                 isOpen = true;
             }
             else
@@ -37,8 +48,13 @@ public class Chest : MonoBehaviour, i_Interactable
         }
         else
         {
-            
             Debug.Log("Chest is locked");
+            
+
+            //if (chestID == keyID)
+            //{
+
+            //}
         }
 
         return true;

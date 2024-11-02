@@ -950,8 +950,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletHitPrefab: {fileID: 2193456159803961, guid: a8f5f64c7156227408f33be5478c5501, type: 3}
   tankHitPrefab: {fileID: 2193456159803961, guid: a0b633f7157d64b42aec3570e75c0e53, type: 3}
+  mageHitPrefab: {fileID: 7251999113603520393, guid: 8bdeea356302cb0499eb7b739bf26d84, type: 3}
   bulletPoolSize: 10
   tankPoolSize: 3
+  magePoolSize: 4
 --- !u!1 &278090876
 GameObject:
   m_ObjectHideFlags: 0
@@ -4348,6 +4350,10 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[10].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4988921683468893256, guid: 2121826842b90ce47926846314379b94, type: 3}
+      propertyPath: interactionPoint
+      value: 
+      objectReference: {fileID: 1659339657}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7129,11 +7135,12 @@ MonoBehaviour:
   turretPrefab: {fileID: 2530541377710386135, guid: 754a04853ae07b94ebb1b21562a4df2d, type: 3}
   dronePrefab: {fileID: 2530541377710386135, guid: 64fa92e2002083747a87acd59c09a406, type: 3}
   tankPrefab: {fileID: 2530541377710386135, guid: fcb71dbafaa601546aaaafe5bcf2f16b, type: 3}
-  poolObj: {fileID: 0}
+  mageProjOne: {fileID: 2530541377710386135, guid: 3fac994265ef34f49977b7efb0306dea, type: 3}
   poolSize: 25
   poolSize2: 15
   turretSize: 15
   tankSize: 4
+  mageSizeOne: 5
 --- !u!1 &1583474442
 GameObject:
   m_ObjectHideFlags: 0
@@ -13621,7 +13628,6 @@ MonoBehaviour:
   interactableMask:
     serializedVersion: 2
     m_Bits: 256
-  num: 0
 --- !u!4 &1728024396 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1155763487187829673, guid: 78fd45d3351501742a1e0548a25ac195, type: 3}

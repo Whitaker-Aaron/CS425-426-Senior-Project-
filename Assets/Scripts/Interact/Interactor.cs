@@ -8,7 +8,6 @@ public class Interactor : MonoBehaviour
     [SerializeField] private Transform interactionPoint;
     [SerializeField] private float interactionRadius = 2.0f;
     [SerializeField] private LayerMask interactableMask;
-    private InputAction.CallbackContext context;
 
     private readonly Collider[] colliders = new Collider[3];
     private i_Interactable currentInteractable;
@@ -28,11 +27,6 @@ public class Interactor : MonoBehaviour
                     currentInteractable = interactable;
                     currentInteractable.ShowUI();
                 }
-
-                if (canInteract(context))
-                {
-                    currentInteractable.Interact(this);
-                }
             }
         }
         else
@@ -40,18 +34,15 @@ public class Interactor : MonoBehaviour
             if (currentInteractable != null)
             {
                 currentInteractable.HideUi();
-                currentInteractable = null; 
+                currentInteractable = null;
             }
         }
     }
-
-    private bool canInteract(InputAction.CallbackContext context)
+    public void OnInteractInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && currentInteractable != null)
         {
-            return true;
+            currentInteractable.Interact(this);
         }
-
-        return false;
     }
 }
