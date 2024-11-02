@@ -8,31 +8,28 @@ public class Interactor : MonoBehaviour
     [SerializeField] private Transform interactionPoint;
     [SerializeField] private float interactionRadius = 2.0f;
     [SerializeField] private LayerMask interactableMask;
+    private InputAction.CallbackContext context;
 
     private readonly Collider[] colliders = new Collider[3];
     private i_Interactable currentInteractable;
 
     private void Update()
     {
-        // Check for interactable objects within the radius
         int num = Physics.OverlapSphereNonAlloc(interactionPoint.position, interactionRadius, colliders, interactableMask);
 
         if (num > 0)
         {
-            // Try to get the first interactable object in range
             i_Interactable interactable = colliders[0].GetComponent<i_Interactable>();
             if (interactable != null)
             {
-                // Show UI if we've entered a new interactable object
                 if (interactable != currentInteractable)
                 {
-                    currentInteractable?.HideUi(); // Hide UI of the previous interactable
+                    currentInteractable?.HideUi();
                     currentInteractable = interactable;
-                    currentInteractable.ShowUI();   // Show UI for the new interactable
+                    currentInteractable.ShowUI();
                 }
 
-                // Interaction key check (e.g., 'F')
-                if (Keyboard.current.fKey.wasPressedThisFrame)
+                if (canInteract(context))
                 {
                     currentInteractable.Interact(this);
                 }
@@ -40,12 +37,21 @@ public class Interactor : MonoBehaviour
         }
         else
         {
-            // No interactable objects in range, hide UI and reset reference
             if (currentInteractable != null)
             {
-                currentInteractable.HideUi(); // Hide UI when leaving interaction range
-                currentInteractable = null;   // Reset interactable reference
+                currentInteractable.HideUi();
+                currentInteractable = null; 
             }
         }
+    }
+
+    private bool canInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

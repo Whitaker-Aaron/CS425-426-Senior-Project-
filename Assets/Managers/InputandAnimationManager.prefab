@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4844636328721397856}
   - component: {fileID: 4686861000923934690}
   - component: {fileID: 1175182273367415644}
+  - component: {fileID: 4988921683468893256}
   m_Layer: 0
   m_Name: InputandAnimationManager
   m_TagString: inputManager
@@ -50,6 +51,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentClass: 0
   speed: 3
+  characterColliding: 0
+  minLookDistance: 1
+  ground:
+    serializedVersion: 2
+    m_Bits: 0
+  abilityInUse: 0
   cooldownTime: 2
   nextAttackTime: 0.19
   maxComboDelay: 0.55
@@ -66,6 +73,9 @@ MonoBehaviour:
   dashSpeed: 3
   dashTime: 0.2
   shootingSwords: 0
+  swordSlashPrefab: {fileID: 0}
+  swordSlash2: {fileID: 0}
+  swordSlash3: {fileID: 0}
   bulletSpawn: {fileID: 0}
   bulletPrefab: {fileID: 2530541377710386135, guid: cf50334aaeef15d4599ac9b2c477d0e3, type: 3}
   bulletSpeed: 15
@@ -90,6 +100,9 @@ MonoBehaviour:
   toolAttackPoint: {fileID: 0}
   toolAttackRadius: 1.05
   placing: 0
+  canRepair: 0
+  repairRate: 1
+  repairVal: 25
 --- !u!114 &359548601331966702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +224,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 21ef7375-5d47-4590-b429-608d4f19f240
     m_ActionName: player/New action
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 27a5bb3b-72d2-4fd0-a488-adc35627072f
+    m_ActionName: player/Dash[/Keyboard/shift,/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3f0f93cd-04a7-4f57-b30e-7259b602d8c0
+    m_ActionName: player/GamePadLook
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5549c403-6448-43b6-a6d5-b6e4376b5d43
+    m_ActionName: player/Reload[/Keyboard/r]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b93cb392-5f35-4517-a326-0d4a35e7d800
+    m_ActionName: player/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c730c0ad-3e0c-43a1-a7d6-1a9a5b743929
+    m_ActionName: player/AbilityOne[/Keyboard/1]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d46d94aa-a704-4abf-9dc7-3c0d4a9d3cd1
+    m_ActionName: player/AbilityTwo[/Keyboard/2]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4a06af09-d331-4553-af8f-575e133ac80c
+    m_ActionName: player/AbilityThree[/Keyboard/3]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 06f49878-4898-4366-8fac-f8f90b15e5ef
+    m_ActionName: player/Interact[/Keyboard/f]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: player
@@ -240,6 +285,7 @@ MonoBehaviour:
   swordSpeed: 15
   swordTime: 0.5
   swordAbilityTime: 5
+  swordShotDamage: 15
   swordShotEffect: {fileID: 5286141860564934149, guid: a7126204363f8c342b6068eaa754243d, type: 3}
   combatAuraEffectStart: {fileID: 6902723416898335439, guid: e71d4ea2a918ec14ba7c00f5a3508383, type: 3}
   combatAuraEffectEnd: {fileID: 1163315792658964826, guid: 4c4d17413b3b43a41988c7049c0608cf, type: 3}
@@ -247,6 +293,7 @@ MonoBehaviour:
   comatAuraRadius: 4
   auraTime: 5
   buffRate: 0.5
+  auraHealthBuff: 25
   rocketPrefab: {fileID: 1253698358172851007, guid: cf9c0abd714474349a3471a391096aa1, type: 3}
   rocketSpeed: 25
   rocketTime: 0.64
@@ -275,3 +322,31 @@ MonoBehaviour:
   teslaMinPlacementRad: 2.5
   teslaWall: {fileID: 1175084382555679053, guid: 9063764d61cb9bc429868fca1dafc1b9, type: 3}
   teslaParent: {fileID: 0}
+  teslaMaxQuantity: 0
+  turretMaxQuantity: 0
+  ka1Time: 0
+  ka2Time: 0
+  ka3Time: 0
+  ga1Time: 0
+  ga2Time: 0
+  ga3Time: 0
+  ea1Time: 0
+  ea2Time: 0
+  ea3Time: 0
+--- !u!114 &4988921683468893256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4413812686469576019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba2ffc38df22664d97305bcad4653cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionPoint: {fileID: 0}
+  interactionRadius: 2
+  interactableMask:
+    serializedVersion: 2
+    m_Bits: 0
