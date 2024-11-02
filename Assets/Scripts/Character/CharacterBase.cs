@@ -66,8 +66,8 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision detected on player");
-        masterInput.GetComponent<masterInput>().StopDash();
+        //Debug.Log("Collision detected on player");
+        //masterInput.GetComponent<masterInput>().StopDash();
         gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
         gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
@@ -108,11 +108,11 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
     {
           if(collisionCounter == 0)
           {
-            masterInput.GetComponent<masterInput>().characterColliding = false;
+            //masterInput.GetComponent<masterInput>().characterColliding = false;
           }
           else
           {
-            masterInput.GetComponent<masterInput>().characterColliding = true;
+            //masterInput.GetComponent<masterInput>().characterColliding = true;
           }
     }
 
@@ -350,6 +350,7 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
     {
         invul = true;
         lifetimeManager.OnDeath();
+        masterInput.GetComponent<masterInput>().pausePlayerInput();
 
         StopCoroutine(animateHealth());
         StopCoroutine(animateDelayedHealth());

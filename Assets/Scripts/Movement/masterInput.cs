@@ -22,6 +22,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+
 //using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class masterInput : MonoBehaviour
@@ -35,16 +36,20 @@ public class masterInput : MonoBehaviour
 
     //player
     CharacterBase character;
+    GameObject projectedPlayer;
 
     //basic general player movement
     //public PlayerInputActions playerControl;
     private PlayerInput playerInput; 
     Vector2 move;
     Vector3 lookPos;
+    Vector3 lookDir;
     Vector3 dashDistance;
     public float speed = 3f;
     bool isMoving = false;
     bool isDashing = false;
+    bool isGamepadLooking = false;
+    bool isMouseLooking = false;
     public bool characterColliding = false;
     public float minLookDistance = 1f;
     public LayerMask ground;
@@ -225,6 +230,7 @@ public class masterInput : MonoBehaviour
         camera = Camera.main.transform;
 
         character = player.GetComponent<CharacterBase>();
+        projectedPlayer = player.transform.Find("ProjectedPlayer").gameObject;
         Debug.Log("Character: " + character.equippedWeapon.weaponClassType);
         currentClass = character.equippedWeapon.weaponClassType;
         Debug.Log("Character's current class from master input: " + currentClass);
@@ -294,6 +300,12 @@ public class masterInput : MonoBehaviour
     }
     private void FixedUpdate()
     {
+
+        player.transform.rotation = Quaternion.Euler(0.0f, player.transform.eulerAngles.y, 0.0f);
+        
+
+
+
         if ((isAttacking && currentClass == WeaponBase.weaponClassTypes.Knight) || inputPaused)
             return;
 
@@ -368,9 +380,9 @@ public class masterInput : MonoBehaviour
 
     public void OnMouseLook(InputAction.CallbackContext context)
     {
-        if (inputPaused)
+        if (inputPaused || isGamepadLooking)
             return;
-
+        isMouseLooking = true;
         // Read mouse position input
         Vector2 mousePosition = context.ReadValue<Vector2>();
 
@@ -385,7 +397,7 @@ public class masterInput : MonoBehaviour
         }
 
         // Calculate the direction to look at
-        Vector3 lookDir = Vector3.zero;
+        lookDir = Vector3.zero;
         if(player != null)
             lookDir = lookPos - player.transform.position;
         lookDir.y = 0;
@@ -394,12 +406,14 @@ public class masterInput : MonoBehaviour
         {
             player.transform.LookAt(player.transform.position + lookDir, Vector3.up); // Rotate towards the look direction
         }
+        isMouseLooking = false;
     }
 
     public void OnGamepadLook(InputAction.CallbackContext context)
     {
-        if (inputPaused)
+        if (inputPaused || isMouseLooking)
             return;
+        isGamepadLooking = true;
 
         // Get the right stick input from the gamepad
         Vector2 rightStickInput = context.ReadValue<Vector2>();
@@ -426,13 +440,15 @@ public class masterInput : MonoBehaviour
         }
 
         // Calculate the direction to look at
-        Vector3 lookDir = lookPos - player.transform.position;
+        lookDir = lookPos - player.transform.position;
         lookDir.y = 0;
 
         if (lookDir.magnitude > minLookDistance && !inputPaused)
         {
             player.transform.LookAt(player.transform.position + lookDir, Vector3.up); // Rotate towards the look direction
+            //player.transform.rotation = Quaternion.Euler(lookDir.)
         }
+        isGamepadLooking = false;
     }
 
     //onMove is implemented through InputSystem in unity, context is the input
@@ -495,6 +511,20 @@ public class masterInput : MonoBehaviour
             isMoving = false;
         else
             isMoving = true;
+        if (isDashing)
+        {
+            RaycastHit hit;
+       
+
+            projectedPlayer.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 1, player.transform.position.z);
+            projectedPlayer.transform.Translate(movement * speed * dashSpeed * Time.deltaTime, Space.World);
+            // Does the ray intersect any objects excluding the player layer
+            if(Physics.Linecast(player.transform.position, projectedPlayer.transform.position)){
+                //Debug.DrawRay(player.transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+                Debug.Log("Collision detected during dash");
+                dashSpeed = 0.0f;
+            }
+        }
 
         // Apply movement based on class and whether the player is blocking
         if (currentClass == WeaponBase.weaponClassTypes.Knight && isBlocking)
@@ -512,8 +542,8 @@ public class masterInput : MonoBehaviour
     IEnumerator PlayerDash()
     {
         yield return new WaitForSeconds(0.2f);
-        dashSpeed = 1;
         isDashing = false;
+        dashSpeed = 1; 
         yield break;
         
     }
