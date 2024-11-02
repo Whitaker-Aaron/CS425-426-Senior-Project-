@@ -42,6 +42,7 @@ public class Interactor : MonoBehaviour
     {
         if (context.performed && currentInteractable != null)
         {
+            Debug.Log("Input detected");
             currentInteractable.Interact(this);
         }
     }
