@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class projectile : MonoBehaviour
 {
+    private CharacterBase playerBase;
 
     public float speed = 10f;
     public const float maxLifeTime = 3f;
     private float lifeTime;
-    public int damage;
+    public int damage = 0;
     Rigidbody rb;
     public LayerMask enemy;
     masterInput input;
@@ -41,12 +42,15 @@ public class projectile : MonoBehaviour
         stop = false;
         lifeTime = maxLifeTime;
 
+        int layerMask = LayerMask.GetMask("Default", "Enemy", "ground");
+
         gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit) && poolName != "enemyMagePoolOne")
+        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask) && poolName != "enemyMagePoolOne")
         {
             hitPoint = hit.point;
+
 
             //player projectile conditions
             if (hit.collider.gameObject.tag == "Enemy" && poolName != "enemyMagePoolOne")
@@ -82,6 +86,20 @@ public class projectile : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(this);
         input = GameObject.FindGameObjectWithTag("inputManager").GetComponent<masterInput>();
+        playerBase = GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterBase>();
+
+        switch(playerBase.equippedWeapon.weaponClassType)
+        {
+            case WeaponBase.weaponClassTypes.Knight:
+                break;
+            case WeaponBase.weaponClassTypes.Gunner:
+                damage = playerBase.gunnerObject.baseAttack + playerBase.equippedWeapon.weaponAttack;
+                break;
+            case WeaponBase.weaponClassTypes.Engineer:
+                damage = playerBase.engineerObject.baseAttack + playerBase.equippedWeapon.weaponAttack;
+                break;
+        }
+        
     }
 
     // Start is called before the first frame update

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
@@ -19,7 +20,7 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
 
     [SerializeField] public WeaponClass knightObject;
     [SerializeField] public WeaponClass gunnerObject;
-    [SerializeField] private WeaponClass engineerObject;
+    [SerializeField] public WeaponClass engineerObject;
 
     [SerializeField] public GameObject shakeEffect;
 
@@ -282,6 +283,7 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
             Debug.Log("Newly equipped weapon is of type Knight");
             masterInput.GetComponent<masterInput>().changeSword(newWeapon);
             equippedWeapon = newWeapon;
+            equippedWeapon.weaponMesh.GetComponent<swordCombat>().updateDamage(knightObject.baseAttack + equippedWeapon.weaponAttack);
         }
         //Need to update for both his weapon pistol and his tool
         if(newWeapon.weaponClassType == WeaponBase.weaponClassTypes.Engineer)
@@ -289,10 +291,13 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
             Debug.Log("Newly equipped weapon is of type Engineer");
             masterInput.GetComponent<masterInput>().changeTool(newWeapon);
             equippedWeapon = newWeapon;
+            GameObject.FindGameObjectWithTag("projectileManager").GetComponent<projectileManager>().updateProjectileDamage("pistolPool", gunnerObject.baseAttack + newWeapon.weaponAttack);
         }
         if(newWeapon.weaponClassType == WeaponBase.weaponClassTypes.Gunner)
         {
             equippedWeapon = newWeapon;
+            GameObject.FindGameObjectWithTag("projectileManager").GetComponent<projectileManager>().updateProjectileDamage("bulletPool", gunnerObject.baseAttack + newWeapon.weaponAttack);
+            
         }
         
     }
@@ -303,6 +308,7 @@ public class CharacterBase : MonoBehaviour, SaveSystemInterface
         masterInput.GetComponent<masterInput>().currentClass = newClass;
         //Debug.Log(weaponClass.currentWeapon);
         weaponsManager.ChangeWeapon(weaponClass.currentWeapon);
+        
         uiManager.UpdateClass(newClass, weaponClass.currentLvl, true);
         //UpdateWeapon(weaponClass.currentWeapon);
         runeInt.ChangeClass(newClass);
