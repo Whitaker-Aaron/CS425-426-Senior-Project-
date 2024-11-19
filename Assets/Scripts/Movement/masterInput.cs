@@ -332,12 +332,17 @@ public class masterInput : MonoBehaviour
     {
         bool playFootsteps = false;
         player.transform.rotation = Quaternion.Euler(0.0f, player.transform.eulerAngles.y, 0.0f);
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movement = new Vector3(horizontal, 0, vertical);
+
+        animationControl.updatePlayerAnimation(movement);
 
         if (inputPaused) return;
             
 
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        //float horizontal = Input.GetAxis("Horizontal");
+        //float vertical = Input.GetAxis("Vertical");
 
         //universal player movement
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
@@ -385,7 +390,7 @@ public class masterInput : MonoBehaviour
 
         animationControl.updatePlayerAnimation(movement);
         */
-        Vector3 movement = new Vector3(horizontal, 0, vertical);
+        
 
         if (Camera.main != null)
         {
@@ -459,8 +464,12 @@ public class masterInput : MonoBehaviour
         int rCount = 0;
         foreach(Rune rune in character.equippedRunes)
         {
-            if(rune.runeType == Rune.RuneType.Spell)
-                rCount++;
+            if(rune != null)
+            {
+                if (rune.runeType == Rune.RuneType.Spell)
+                    rCount++;
+            }
+            
             
         }
         if(rCount > 0)
@@ -609,13 +618,21 @@ public class masterInput : MonoBehaviour
             RaycastHit hit;
        
 
-            projectedPlayer.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 1, player.transform.position.z);
+            projectedPlayer.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 1f, player.transform.position.z);
             projectedPlayer.transform.Translate(movement * speed * 1.2f * dashSpeed * Time.deltaTime, Space.World);
             // Does the ray intersect any objects excluding the player layer
-            if(Physics.Linecast(player.transform.position, projectedPlayer.transform.position)){
-                //Debug.DrawRay(player.transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-                Debug.Log("Collision detected during dash");
-                dashSpeed = 0.0f;
+            if(Physics.Linecast(player.transform.position, projectedPlayer.transform.position, out RaycastHit hitInfo)){
+                //Debug.DrawRay(player.transform.position, transform.TransformDirection(Vector3.forward) * hitInfo.distance, Color.yellow);
+                if(hitInfo.collider.tag == "RestorePoint"){
+                    Debug.Log(hitInfo.collider.tag);
+                    Debug.Log("Ignoring RestorePoint collision");
+                }
+                else
+                {
+                    Debug.Log("Collision detected during dash");
+                    Debug.Log(hitInfo.collider.name);
+                    dashSpeed = 0.0f;
+                }  
             }
         }
 
@@ -647,6 +664,8 @@ public class masterInput : MonoBehaviour
     public void pausePlayerInput()
     {
         inputPaused = true;
+        isMoving = false;
+        isDashing = false;
         animationControl.stop();
 
     }
